@@ -20,8 +20,7 @@ CC		= gcc
 
 RM		= rm -f
 
-CFLAGS	= -Wall -Wextra -lasound -lm
-
+CFLAGS	= -Wextra -Wall -lasound -lm
 
 ${NAME}:	${OBJS}
 						gcc -o ${NAME} ${SRCS} ${CFLAGS}

@@ -13,7 +13,7 @@ snd_pcm_t *alsa_setup(snd_pcm_t *handle)
                     SND_PCM_FORMAT_S32,
                     //SND_PCM_FORMAT_U8,
                     SND_PCM_ACCESS_RW_INTERLEAVED,
-                    1,
+                    NBCHANNELS,
                     SAMPLERATE,
                     1,
                     LATENCY)) < 0) {   /* 0.5sec */

@@ -15,17 +15,17 @@ float oscillator_setphase_error(t_oscillator *oscillator)
   return error;
 }
 
-int oscillator_getvalue(t_oscillator *oscillator, int i)
+float oscillator_getvalue(t_oscillator *oscillator, int i)
 {
   float n;
   float f;
   float p;
-  int value;
+  float value;
 
   f = oscillator->freq;
   p = oscillator->phase;
   n = (float)i;
-  value = sin((n / (SAMPLERATE / f) + p) * 2 * M_PI ) * INT_MAX  / 2;
+  value = sin((n / (SAMPLERATE / f) + p) * 2 * M_PI );// * INT_MAX  / 2;
   return value;
 }
 
