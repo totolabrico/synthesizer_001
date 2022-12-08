@@ -1,36 +1,53 @@
 #include "main.h"
 
-void oscillator_setfreq(t_oscillator *oscillator, float freq)
+void *osc_new(float *freq)
 {
-  oscillator->freq = freq;
-  oscillator->phase_error = oscillator_setphase_error(oscillator);
+  t_osc *osc;
+
+  osc = malloc(sizeof(t_osc));
+  osc->freq = osc_setfreq(osc, freq);
+  return (void*)osc;
 }
 
-float oscillator_setphase_error(t_oscillator *oscillator)
+float osc_getfreq(t_osc *osc)
+{
+  return *osc->freq;
+}
+
+float *osc_setfreq(t_osc *osc, float *freq)
+{
+  osc->freq = freq;
+  osc->phase_error = osc_setphase_error(osc);
+  return freq;
+}
+
+float osc_setphase_error(t_osc *osc)
 {
   float error;
 
-  error = (1 / (float)(SAMPLERATE / SAMPLELEN)) * oscillator->freq;
+  error = (1 / (float)(SAMPLERATE / SAMPLELEN)) * *osc->freq;
   error -= roundf(error);
   return error;
 }
 
-float oscillator_getvalue(t_oscillator *oscillator, int i)
+float osc_getvalue(t_osc *osc, int i)
 {
   float n;
   float f;
   float p;
   float value;
 
-  f = oscillator->freq;
-  p = oscillator->phase;
+  f = *osc->freq;
+  p = osc->phase;
   n = (float)i;
   value = sin((n / (SAMPLERATE / f) + p) * 2 * M_PI );// * INT_MAX  / 2;
+  if (i == SAMPLELEN - 1)
+    osc_setphase(osc);
   return value;
 }
 
-void oscillator_setphase(t_oscillator *oscillator)
+void osc_setphase(t_osc *osc)
 {
-  oscillator->phase += oscillator->phase_error;
-  oscillator->phase -= (int)(oscillator->phase);
+  osc->phase += osc->phase_error;
+  osc->phase -= (int)(osc->phase);
 }

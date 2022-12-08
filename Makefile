@@ -12,7 +12,7 @@
 
 NAME	= synth
 
-SRCS	= main.c alsa_utils.c synthesizer.c oscillator_utils.c
+SRCS	= main.c alsa_utils.c oscillator_utils.c list_utils.c
 
 HEADERS	= main.h
 
