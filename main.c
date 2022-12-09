@@ -1,61 +1,59 @@
 #include "main.h"
 
-int main(int argc, char **argv)
+int main(void)
 {
-  float lfofreq;
+  snd_pcm_t *pcm_handle = NULL;
+  snd_seq_t *seq_handle = NULL;
+  t_list *notes = NULL;
 
-  lfofreq = 0;
-  if (argc >= 2 && argc <= 3)
-  {
-    if (argc == 3)
-      lfofreq = strtof(argv[2], NULL);
-    //printf("%f\n", lfofreq);
-    run(strtof(argv[1], NULL), lfofreq);
-  }
-  else
-    printf("please enter frequency\n");
+  lstadd_back(&notes, lstnew(note_new(201,1)));
+  lstadd_back(&notes, lstnew(note_new(100,1)));
+  //note_clear();
+  //print_notes(notes);
+  pcm_handle = pcm_setup(pcm_handle);
+  seq_handle = midi_setup(seq_handle);
+  pcm_loop(pcm_handle, notes);
+  //midi_loop(seq_handle);
   return 0;
 }
 
-void run(float Freq, float Lfofreq)
+void pcm_loop(snd_pcm_t *handle, t_list *notes)
 {
-  int buffer[SAMPLELEN];            /* some random data */
-  snd_pcm_t *handle;
+  int buffer[SAMPLELEN];
   snd_pcm_sframes_t frames;
-  t_list *list;
-  float freq = Freq;
-  float lfofreq = Lfofreq;
-  list = NULL;
-  list = lstnew(osc_new(&freq));
-  lstadd_back(&list, lstnew(osc_new(&lfofreq)));
-  //printf("%d\n", lstsize(list));
-  handle = NULL;
-  handle = alsa_setup(handle);
+
   while(1)
   {
-    master_write(&buffer[0], list);
-    frames = alsa_write(handle, frames, buffer, (long)SAMPLELEN);
+    master_write(&buffer[0], notes);
+    frames = pcm_write(handle, frames, buffer, (long)SAMPLELEN);
   }
-  handle = alsa_close(handle, frames, (long)SAMPLELEN);
+  handle = pcm_close(handle, frames, (long)SAMPLELEN);
 }
 
 int *master_write(int *buffer, t_list *list)
 {
-  t_list *el =lstget(list, 0);
-  t_osc *signal = (t_osc *)el->content;
-  t_list *el2 =lstget(list, 1);
-  t_osc *env = (t_osc *)el2->content;
-  //float *freq = env->freq;
-  //printf("%f\n", *freq);
-  float amp = 0.5;
+  float amp = 1;
   float out;
-  for (int i = 0; i < SAMPLELEN; i++)
+  t_note *note;
+  int i = 0;
+  t_list *l;
+  int nbnotes = lstsize(list);
+
+  while(i < SAMPLELEN)
   {
     //fm = osc_getvalue(&oscs[1], i);
     //osc_setfreq(&oscs[0], (float)(freq + fm));
-    out = osc_getvalue(signal, i);
-    amp = osc_getvalue(env, i);
+    //out = osc_getvalue(signal, i);
+    out = 0;
+    l = list;
+    while (l)
+    {
+      note = (t_note *)l->content;
+      out += additive_value(note->osc, i) / nbnotes;
+      l =l->next;
+    }
     buffer[i] = (int)(out * amp  * INT_MAX / 2);
+    i++;
   }
   return buffer;
 }

@@ -1,6 +1,6 @@
 #include "main.h"
 
-snd_pcm_t *alsa_setup(snd_pcm_t *handle)
+snd_pcm_t *pcm_setup(snd_pcm_t *handle)
 {
   static char *device = "default";
   int err;
@@ -23,7 +23,7 @@ snd_pcm_t *alsa_setup(snd_pcm_t *handle)
   return handle;
 }
 
-snd_pcm_sframes_t alsa_write(snd_pcm_t *handle, snd_pcm_sframes_t frames, int buffer[], long len)
+snd_pcm_sframes_t pcm_write(snd_pcm_t *handle, snd_pcm_sframes_t frames, int buffer[], long len)
 {
   frames = snd_pcm_writei(handle, buffer, len);
   if (frames < 0)
@@ -33,7 +33,7 @@ snd_pcm_sframes_t alsa_write(snd_pcm_t *handle, snd_pcm_sframes_t frames, int bu
   return frames;
 }
 
-snd_pcm_t *alsa_close(snd_pcm_t *handle, snd_pcm_sframes_t frames, long len)
+snd_pcm_t *pcm_close(snd_pcm_t *handle, snd_pcm_sframes_t frames, long len)
 {
   int err;
 

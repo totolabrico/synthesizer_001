@@ -12,7 +12,8 @@
 
 NAME	= synth
 
-SRCS	= main.c alsa_utils.c oscillator_utils.c list_utils.c
+SRCS	= main.c pcm_utils.c oscillator_utils.c list_utils.c synth_utils.c \
+				midi_utils.c
 
 HEADERS	= main.h
 
