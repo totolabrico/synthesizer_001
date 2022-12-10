@@ -7,6 +7,7 @@ void *osc_new(float freq, float amp)
   //osc->freq =
   osc_setfreq(osc, freq);
   osc_setamp(osc, amp);
+  osc->value = 0.0;
   return (void*)osc;
 }
 
@@ -54,11 +55,11 @@ float osc_getvalue(t_osc *osc, int i)
   float p = osc->phase;
   float a = osc->amp;
   float n = (float)i;
-  float value = sin((n / (SAMPLERATE / f) + p) * 2 * M_PI ) * a;
+  osc->value = sin((n / (SAMPLERATE / f) + p) * 2 * M_PI ) * a;
   //printf("i : %d, freq : %f, amp : %f, phase : %f, value: %f\n", i, f, a ,p, value);
   if (i == SAMPLELEN - 1)
     osc_setphase(osc);
-  return value;
+  return osc->value;
 }
 
 void osc_setphase(t_osc *osc)

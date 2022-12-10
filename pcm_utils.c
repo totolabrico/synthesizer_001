@@ -23,6 +23,22 @@ snd_pcm_t *pcm_setup(snd_pcm_t *handle)
   return handle;
 }
 
+void *pcm_loop(void *addr)
+{
+  t_pcmsettings *pcm_settings;
+  int buffer[SAMPLELEN];
+  snd_pcm_sframes_t frames;
+
+  pcm_settings = (t_pcmsettings *)addr;
+  while(1)
+  {
+    master_write(&buffer[0], pcm_settings->notes);
+    frames = pcm_write(pcm_settings->handle, frames, buffer, (long)SAMPLELEN);
+  }
+  pcm_settings->handle = pcm_close(pcm_settings->handle, frames, (long)SAMPLELEN);
+  return addr;
+}
+
 snd_pcm_sframes_t pcm_write(snd_pcm_t *handle, snd_pcm_sframes_t frames, int buffer[], long len)
 {
   frames = snd_pcm_writei(handle, buffer, len);

@@ -31,12 +31,15 @@ void print_osclist(t_list *list)
   }
 }
 
-void *note_new(float freq, float amp)
+void *note_new(int pitch, int velocity)
 {
   t_note * note;
   t_list * osc;
-  osc = osclistnew(freq, amp, 10);
-  note = malloc(sizeof(note));
+
+  note = malloc(sizeof(t_note));
+  note->pitch = pitch;
+  note->velocity = velocity;
+  osc = osclistnew((float)ptof(pitch), (float)velocity / 127, 10);
   note->osc = osc;
   return (void *)note;
 }
@@ -57,13 +60,33 @@ void print_notes(t_list *list)
   }
 }
 
-void note_clear(t_note *note)
+void note_clear(void *addr)
 {
+  t_note *note;
   t_list *osc;
 
+  note = (t_note *)addr;
   osc = (t_list *)note->osc;
   lstclear(&osc, osc_del);
   free(note);
+}
+
+int note_getid(t_list * list, int pitch)
+{
+  t_note *note;
+  int i;
+
+  i = 0;
+  while(list)
+  {
+    note = (t_note *)list->content;
+  //  printf("pitch : %d\n", note->pitch);
+    if (note->pitch == pitch)
+      return (i);
+    list = list->next;
+    i++;
+  }
+  return (-1);
 }
 
 void note_setfreq(t_list *list, float freq)

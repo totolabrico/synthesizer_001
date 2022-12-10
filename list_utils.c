@@ -126,7 +126,6 @@ int	lstsize(t_list *lst)
 	return (i);
 }
 
-
 t_list	*lstget(t_list *list, int id)
 {
 	int i;
@@ -135,11 +134,37 @@ t_list	*lstget(t_list *list, int id)
 	while(list && i <= id)
 	{
 			if(i == id)
-			{
 				return list;
-			}
 			list = list->next;
 			i++;
 	}
 	return NULL;
+}
+
+t_list *lstpop(t_list *list, void (*del)(void*), int id)
+{
+	t_list *last;
+	t_list *l;
+	t_list * res;
+
+	res = list;
+	last = NULL;
+	l = lstget(list, id);
+	if (!l)
+		return res;
+	if (id > 0)
+		last = lstget(list, id -1);
+	if(l != lstlast(list))
+	{
+		if (last)
+			last->next = l->next;
+		else
+			res = l->next;
+	}
+	else if (!last)
+		res = NULL;
+	else
+		last->next = NULL;
+	lstdelone(l, del);
+	return res;
 }

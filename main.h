@@ -3,12 +3,16 @@
 #include "/usr/include/alsa/asoundlib.h"
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <limits.h>
 #include <pthread.h>
 #define SAMPLERATE 44100           /* stream rate */
-#define SAMPLELEN 441       /* stream rate */
-#define LATENCY 500000
+#define SAMPLELEN 10       /* stream rate */
+#define LATENCY 5000
 #define NBCHANNELS 1
+#define GAIN 3
+
+///////////////////// il y a tres certainement des leaks !
 
 typedef struct s_list
 {
@@ -18,6 +22,7 @@ typedef struct s_list
 
 typedef struct s_osc
 {
+	float value;
   float freq;
 	float amp;
   float phase_error;
@@ -26,16 +31,32 @@ typedef struct s_osc
 
 typedef struct s_note
 {
+	int pitch;
+	int velocity;
 	t_list	*osc;
 }	t_note;
+
+typedef struct s_pcmsettings
+{
+	snd_pcm_t *handle;
+	t_list **notes;
+} t_pcmsettings;
+
+typedef struct s_midisettings
+{
+	snd_seq_t *handle;
+	t_list **notes;
+} t_midisettings;
 
 snd_pcm_t *pcm_setup(snd_pcm_t *handle);
 snd_pcm_sframes_t pcm_write(snd_pcm_t *handle, snd_pcm_sframes_t frames, int buffer[], long len);
 snd_pcm_t *pcm_close(snd_pcm_t *handle, snd_pcm_sframes_t frames, long len);
-void pcm_loop(snd_pcm_t *handle, t_list *notes);
-int *master_write(int *buffer, t_list *list);
+void *pcm_loop(void *addr);
+int *master_write(int *buffer, t_list **list);
 snd_seq_t *midi_setup(snd_seq_t *seq_handle);
-void midi_loop(snd_seq_t *seq_handle);
+void *midi_loop(void *addr);
+void *midi_check(snd_seq_t *seq_handle);
+void midiconnexion_setup();
 
 void	lstadd_back(t_list **lst, t_list *new);
 void	lstadd_front(t_list **lst, t_list *new);
@@ -47,6 +68,7 @@ t_list	*lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 t_list	*lstnew(void *content);
 int	lstsize(t_list *lst);
 t_list	*lstget(t_list *list, int id);
+t_list *lstpop(t_list *list, void (*del)(void*), int id);
 
 void *osc_new(float freq, float amp);
 void osc_del(void *p);
@@ -60,11 +82,14 @@ float osc_getamp(t_osc *osc);
 
 float additive_value(t_list *list, int i);
 t_list *osclistnew(float freq, float amp, int size);
-void *note_new(float freq, float amp);
-void note_clear(t_note *note);
+void *note_new(int pitch, int velocity);
+void note_clear(void *addr);
 void note_setfreq(t_list *list, float freq);
 void print_osclist(t_list *list);
 void print_note(t_note *note);
 void print_notes(t_list *list);
+int note_getid(t_list * list, int pitch);
+
+float ptof(int pitch);
 
 #endif
