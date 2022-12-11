@@ -143,15 +143,15 @@ t_list	*lstget(t_list *list, int id)
 
 t_list *lstpop(t_list *list, void (*del)(void*), int id)
 {
-	t_list *last;
 	t_list *l;
-	t_list * res;
+	t_list *first;
+	t_list *last;
 
-	res = list;
-	last = NULL;
 	l = lstget(list, id);
+	first = list;
+	last = NULL;
 	if (!l)
-		return res;
+		return first;
 	if (id > 0)
 		last = lstget(list, id -1);
 	if(l != lstlast(list))
@@ -159,12 +159,12 @@ t_list *lstpop(t_list *list, void (*del)(void*), int id)
 		if (last)
 			last->next = l->next;
 		else
-			res = l->next;
+			first = l->next;
 	}
 	else if (!last)
-		res = NULL;
+		first = NULL;
 	else
 		last->next = NULL;
 	lstdelone(l, del);
-	return res;
+	return first;
 }

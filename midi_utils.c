@@ -13,6 +13,7 @@ void *midi_loop(void *addr)
 	t_midisettings *midi_settings;
 	snd_seq_event_t *ev;
 	t_list **notes;
+	t_note *note;
 
 	ev = NULL;
 	midi_settings = (t_midisettings *)addr;
@@ -24,14 +25,13 @@ void *midi_loop(void *addr)
 		{
 			int pitch = ev->data.note.note;
 			int velocity = ev->data.note.velocity;
+			note = note_get(*notes, pitch);
 			if (velocity != 0)
 				lstadd_back(notes, lstnew(note_new(pitch,velocity)));
 			else
 			{
-				*notes = lstpop(*notes, &note_clear, note_getid(*notes, pitch));
+				note_setvelocity(note, 0);
 			}
-			//printf("%d, %d\n", pitch, velocity);
-		//	print_notes(*notes);
 		}
 	}
 	return (addr);

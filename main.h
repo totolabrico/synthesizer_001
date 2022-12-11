@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <limits.h>
 #include <pthread.h>
-#define SAMPLERATE 44100           /* stream rate */
-#define SAMPLELEN 10       /* stream rate */
-#define LATENCY 5000
+#define SAMPLERATE 44100
+#define SAMPLELEN 44
+#define LATENCY 1000 // underrun occurs may be due to low latency
 #define NBCHANNELS 1
 #define GAIN 3
 
@@ -73,22 +73,27 @@ t_list *lstpop(t_list *list, void (*del)(void*), int id);
 void *osc_new(float freq, float amp);
 void osc_del(void *p);
 float osc_setphase_error(t_osc *osc);
-float osc_getvalue(t_osc *osc, int i);
+float osc_setvalue(t_osc *osc, int i);
 void osc_setphase(t_osc *osc);
 void osc_setfreq(t_osc *osc, float freq);
 float osc_getfreq(t_osc *osc);
 void osc_setamp(t_osc *osc, float amp);
 float osc_getamp(t_osc *osc);
 
-float additive_value(t_list *list, int i);
 t_list *osclistnew(float freq, float amp, int size);
+float osclst_getaddvalue(t_list *list, int i);
+void osclst_setfreq(t_list *list, float freq);
+void print_osclist(t_list *list);
+
 void *note_new(int pitch, int velocity);
 void note_clear(void *addr);
-void note_setfreq(t_list *list, float freq);
-void print_osclist(t_list *list);
 void print_note(t_note *note);
 void print_notes(t_list *list);
+t_note *note_get(t_list * list, int pitch);
 int note_getid(t_list * list, int pitch);
+void note_setvelocity(t_note *note, int velocity);
+float note_getvalue(t_note *note, int i);
+t_list *notes_purge(t_list *list);
 
 float ptof(int pitch);
 

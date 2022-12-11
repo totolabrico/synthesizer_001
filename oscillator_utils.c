@@ -8,15 +8,18 @@ void *osc_new(float freq, float amp)
   osc_setfreq(osc, freq);
   osc_setamp(osc, amp);
   osc->value = 0.0;
+  osc->phase = 0;
   return (void*)osc;
 }
 
 void osc_del(void *p)
 {
+
     t_osc *osc;
 
     osc = (t_osc *)p;
     free(osc);
+
 }
 
 float osc_getfreq(t_osc *osc)
@@ -49,8 +52,9 @@ float osc_setphase_error(t_osc *osc)
   return error;
 }
 
-float osc_getvalue(t_osc *osc, int i)
+float osc_setvalue(t_osc *osc, int i)
 {
+
   float f = osc->freq;
   float p = osc->phase;
   float a = osc->amp;
