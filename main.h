@@ -7,8 +7,8 @@
 #include <limits.h>
 #include <pthread.h>
 #define SAMPLERATE 44100
-#define SAMPLELEN 44
-#define LATENCY 1000 // underrun occurs may be due to low latency
+#define SAMPLELEN 4410
+#define LATENCY 30000 // underrun occurs may be due to low latency
 #define NBCHANNELS 1
 #define GAIN 3
 
@@ -73,7 +73,7 @@ t_list *lstpop(t_list *list, void (*del)(void*), int id);
 void *osc_new(float freq, float amp);
 void osc_del(void *p);
 float osc_setphase_error(t_osc *osc);
-float osc_setvalue(t_osc *osc, int i);
+float osc_setvalue(t_osc *osc, int velocity, int i);
 void osc_setphase(t_osc *osc);
 void osc_setfreq(t_osc *osc, float freq);
 float osc_getfreq(t_osc *osc);
@@ -81,7 +81,7 @@ void osc_setamp(t_osc *osc, float amp);
 float osc_getamp(t_osc *osc);
 
 t_list *osclistnew(float freq, float amp, int size);
-float osclst_getaddvalue(t_list *list, int i);
+float osclst_getaddvalue(t_note *note, int i);
 void osclst_setfreq(t_list *list, float freq);
 void print_osclist(t_list *list);
 

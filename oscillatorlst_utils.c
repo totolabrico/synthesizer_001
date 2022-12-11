@@ -31,12 +31,14 @@ void print_osclist(t_list *list)
   }
 }
 
-float osclst_getaddvalue(t_list *list, int i)
+float osclst_getaddvalue(t_note *note, int i)
 {
+  t_list *list;
   t_osc *osc;
   float res;
   int size;
 
+  list = note->osc;
   res = 0;
   size = lstsize(list);
   while(list)
@@ -44,7 +46,7 @@ float osclst_getaddvalue(t_list *list, int i)
     osc = (t_osc *)list->content;
     if (osc)
     {
-      osc_setvalue(osc, i);
+      osc_setvalue(osc, note->velocity, i);
       res += osc->value / (float)size;
     }
     list = list->next;

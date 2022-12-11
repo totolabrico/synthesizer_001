@@ -84,7 +84,7 @@ int note_getid(t_list * list, int pitch)
 
 float note_getvalue(t_note *note, int i)
 {
-  return osclst_getaddvalue(note->osc, i);
+  return osclst_getaddvalue(note, i);
 }
 
 t_list *notes_purge(t_list *list)

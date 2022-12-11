@@ -53,7 +53,6 @@ int *master_write(int *buffer, t_list **list)
   int i = 0;
   t_list *l;
 
-  *list = notes_purge(*list);
   int nbnotes = lstsize(*list);
   while(i < SAMPLELEN)
   {
@@ -72,5 +71,6 @@ int *master_write(int *buffer, t_list **list)
     buffer[i] = (int)(out * amp * GAIN * INT_MAX / 2);
     i++;
   }
+  *list = notes_purge(*list);
   return buffer;
 }
