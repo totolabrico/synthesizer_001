@@ -26,12 +26,10 @@ void *midi_loop(void *addr)
 			int pitch = ev->data.note.note;
 			int velocity = ev->data.note.velocity;
 			note = note_get(*notes, pitch);
-			if (velocity != 0)
-				lstadd_back(notes, lstnew(note_new(pitch,velocity)));
+			if(note)
+				note_setvelocity(note, ev->data.note.velocity);
 			else
-			{
-				note_setvelocity(note, 0);
-			}
+				lstadd_back(notes, lstnew(note_new(pitch,velocity)));
 		}
 	}
 	return (addr);

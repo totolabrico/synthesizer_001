@@ -28,6 +28,9 @@ ${NAME}:	${OBJS}
 
 all:		${NAME}
 
+rasp:
+		gcc -o ${NAME}32 ${SRCS} -m32 ${CFLAGS}
+
 fclean:
 						${RM} $(NAME)
 

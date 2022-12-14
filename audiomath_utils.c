@@ -9,7 +9,7 @@ float frequency; /* . . . which we want to find, */
 /* calculate required numbers */
 semitone_ratio = pow(2, 1/12.0); /* approx. 1.0594631 */
 /* find Middle C, three semitones above low A = 220 */
-c6 = 440.0 * pow(semitone_ratio, 3);
+c6 = 432.0 * pow(semitone_ratio, 3);
 /* MIDI Note 0 is C, 5 octaves below Middle C */
 c0 = c6 * pow(0.5, 6);
 /* calculate a frequency for a given MIDI Note Number */
@@ -17,4 +17,17 @@ c0 = c6 * pow(0.5, 6);
 frequency = c0 * pow(semitone_ratio, pitch);
 //printf("MIDI Note %d has frequency %f\n", midinote,frequency);
 return frequency;
+}
+
+float do_op(float val1, char c, float val2)
+{
+    if (c == '+')
+        return val1 + val2;
+    else if (c == '-')
+        return val1 - val2;
+    else if (c == '*')
+        return val1 * val2;
+    else if (c == '/')
+        return val1 / val2;
+    return 0;
 }

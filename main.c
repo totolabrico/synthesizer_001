@@ -27,13 +27,12 @@ int main(void)
   */
   pcm_handle = pcm_setup(pcm_handle);
   seq_handle = midi_setup(seq_handle);
-  system("aconnect 20 129");
+  system("aconnect 24 129");
   //midiconnexion_setup();
   pcm_settings.handle = pcm_handle;
   pcm_settings.notes = &notes;
   midi_settings.handle = seq_handle;
   midi_settings.notes = &notes;
-  //pcm_loop((void *)&pcm_settings);
   pthread_create(&thread_pcm, NULL, &pcm_loop, (void *)&pcm_settings);
   pthread_create(&thread_midi, NULL, &midi_loop, (void *)&midi_settings);
   pthread_create(&thread_input, NULL, &input_routine, NULL);
@@ -47,30 +46,25 @@ int main(void)
 
 int *master_write(int *buffer, t_list **list)
 {
-  float amp = 1;
-  float out;
-  t_note *note;
-  int i = 0;
   t_list *l;
+  t_note *note;
+  float out;
+  int i = 0;
 
-  int nbnotes = lstsize(*list);
   while(i < SAMPLELEN)
   {
-    //fm = osc_getvalue(&oscs[1], i);
-    //osc_setfreq(&oscs[0], (float)(freq + fm));
-    //out = osc_getvalue(signal, i);
     out = 0;
     l = *list;
     while (l)
     {
       note = (t_note *)l->content;
-      out += note_getvalue(note, i) / nbnotes;
-      //out += osclst_getaddvalue(note->osc, i) / nbnotes;
-      l =l->next;
+      out += note_setvalue(note, i);
+      if (l)
+        l =l->next;
     }
-    buffer[i] = (int)(out * amp * GAIN * INT_MAX / 2);
+    buffer[i] = (int)(out * GAIN * INT_MAX / 2);
+    *list = notes_purge(*list);
     i++;
   }
-  *list = notes_purge(*list);
   return buffer;
 }

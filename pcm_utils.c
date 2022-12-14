@@ -11,12 +11,11 @@ snd_pcm_t *pcm_setup(snd_pcm_t *handle)
   }
   if ((err = snd_pcm_set_params(handle,
                     SND_PCM_FORMAT_S32,
-                    //SND_PCM_FORMAT_U8,
                     SND_PCM_ACCESS_RW_INTERLEAVED,
                     NBCHANNELS,
                     SAMPLERATE,
                     1,
-                    LATENCY)) < 0) {   /* 0.5sec */
+                    LATENCY)) < 0) {
       printf("Playback open error: %s\n", snd_strerror(err));
       exit(EXIT_FAILURE);
   }

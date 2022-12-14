@@ -7,10 +7,10 @@
 #include <limits.h>
 #include <pthread.h>
 #define SAMPLERATE 44100
-#define SAMPLELEN 4410
-#define LATENCY 30000 // underrun occurs may be due to low latency
+#define SAMPLELEN 441
+#define LATENCY 100000 // woaw 50000 seems nice
 #define NBCHANNELS 1
-#define GAIN 3
+#define GAIN 2
 
 ///////////////////// il y a tres certainement des leaks !
 
@@ -23,17 +23,21 @@ typedef struct s_list
 typedef struct s_osc
 {
 	float value;
-  float freq;
+	float freq;
 	float amp;
-  float phase_error;
-  float phase;
+	float phase_error;
+	float phase;
+	float gain;
 } t_osc;
 
 typedef struct s_note
 {
 	int pitch;
 	int velocity;
+	float amp;
+	float value;
 	t_list	*osc;
+	t_list	*env;
 }	t_note;
 
 typedef struct s_pcmsettings
@@ -73,16 +77,16 @@ t_list *lstpop(t_list *list, void (*del)(void*), int id);
 void *osc_new(float freq, float amp);
 void osc_del(void *p);
 float osc_setphase_error(t_osc *osc);
-float osc_setvalue(t_osc *osc, int velocity, int i);
+float osc_setvalue(t_osc *osc, int i);
 void osc_setphase(t_osc *osc);
 void osc_setfreq(t_osc *osc, float freq);
 float osc_getfreq(t_osc *osc);
 void osc_setamp(t_osc *osc, float amp);
 float osc_getamp(t_osc *osc);
 
-t_list *osclistnew(float freq, float amp, int size);
-float osclst_getaddvalue(t_note *note, int i);
-void osclst_setfreq(t_list *list, float freq);
+t_list *osclistnew(int size);
+void osclst_set(t_list *list, char cmd,float val1, char op, float val2);
+float osclst_getaddvalue(t_list *list, int i);
 void print_osclist(t_list *list);
 
 void *note_new(int pitch, int velocity);
@@ -92,9 +96,11 @@ void print_notes(t_list *list);
 t_note *note_get(t_list * list, int pitch);
 int note_getid(t_list * list, int pitch);
 void note_setvelocity(t_note *note, int velocity);
-float note_getvalue(t_note *note, int i);
+float note_getvalue(t_note *note);
+float note_setvalue(t_note *note, int i);
 t_list *notes_purge(t_list *list);
 
 float ptof(int pitch);
+float do_op(float val1, char c, float val2);
 
 #endif
