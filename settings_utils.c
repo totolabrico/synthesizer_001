@@ -83,3 +83,11 @@ void osclstsettings_set(t_list *list, int id, char set, float value)
     i++;
   }
 }
+
+void oscsettings_clear(void *addr)
+{
+  t_oscsettings *oscset;
+
+  oscset = (t_oscsettings *)addr;
+  free(oscset);
+}

@@ -10,7 +10,7 @@
 #define SAMPLELEN 441
 #define LATENCY 100000
 #define NBCHANNELS 1
-#define GAIN 2
+#define GAIN 0.1
 
 typedef struct s_list
 {
@@ -64,7 +64,10 @@ void				midi_initsettings(t_midisettings *settings, snd_seq_t *handle, t_list **
 t_list				*osclstsettings_new(int size);
 void				osclstsettings_set(t_list *list, int id, char set, float value);
 void				osclstsettings_print(t_list *list);
+void				oscsettings_clear(void *addr);
 
+
+void				run(char *machine_name);
 snd_pcm_t			*pcm_setup(snd_pcm_t *handle);
 snd_pcm_sframes_t	pcm_write(snd_pcm_t *handle, snd_pcm_sframes_t frames, int buffer[], long len);
 snd_pcm_t			*pcm_close(snd_pcm_t *handle, snd_pcm_sframes_t frames, long len);
@@ -75,6 +78,7 @@ void				*midi_loop(void *addr);
 void				*midi_check(snd_seq_t *seq_handle);
 void				midiconnexion_setup();
 void				controller_set(t_list **notes, t_list **envset, int param, int value);
+void				end_sustain(t_list **notes);
 
 void				lstadd_back(t_list **lst, t_list *new);
 void				lstadd_front(t_list **lst, t_list *new);

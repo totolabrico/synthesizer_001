@@ -13,6 +13,8 @@ void *midi_loop(void *addr)
 	t_midisettings *midi_settings;
 	snd_seq_event_t *ev;
 	t_list **notes;
+	t_list *sustained = NULL;
+	int sustain = 0;
 	t_note *note;
 
 	ev = NULL;
@@ -22,8 +24,17 @@ void *midi_loop(void *addr)
 	{
 		snd_seq_event_input(midi_settings->handle, &ev);
 		if (ev->type == SND_SEQ_EVENT_CONTROLLER) // 10
-		{		
-			controller_set(notes, midi_settings->env, ev->data.control.param, ev->data.control.value);
+		{	
+			if (ev->data.control.param == 64)
+			{
+				sustain = ev->data.control.value;
+				if (sustain == 0)
+				{
+					end_sustain(&sustained);
+				}
+			}
+			else
+				controller_set(notes, midi_settings->env, ev->data.control.param, ev->data.control.value);
 		}
 		if (ev->type == SND_SEQ_EVENT_NOTEON) // 6
 		{
@@ -32,11 +43,36 @@ void *midi_loop(void *addr)
 			note = note_get(*notes, pitch);
 			if(!note)
 				lstadd_back(notes, lstnew(note_new(pitch,velocity, midi_settings->env)));
-			else //if (velocity != 0) # forever mode
-				note_setvelocity(note, 0);
+			else
+			{
+				if (velocity != 0)
+					note_setvelocity(note, velocity);
+				else if (sustain == 0)
+					note_setvelocity(note, 0);
+				else
+				{
+					lstadd_back(&sustained, lstnew(note));
+					printf("sustain add neww note\n");
+				}
+			}
 		}
 	}
 	return (addr);
+}
+
+void end_sustain(t_list **notes)
+{
+	t_list *l;
+	t_note *note;
+	l = *notes;
+
+	while (l)
+	{
+		note = (t_note *)l->content;
+		note_setvelocity(note, 0);
+		l = l->next;
+	}
+	lstclear(notes, NULL);
 }
 
 void controller_set(t_list **notes, t_list **envset, int param, int value)

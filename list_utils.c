@@ -28,7 +28,7 @@ void	lstclear(t_list **lst, void (*del)(void*))
 	t_list	*last;
 	t_list	*next;
 
-	if (!lst || !*lst || !del)
+	if (!lst || !*lst)
 		return ;
 	last = *lst;
 	while (last)
@@ -44,7 +44,8 @@ void	lstdelone(t_list *lst, void (*del)(void*))
 {
 	if (lst && del)
 	{
-		del(lst->content);
+		if (del)
+			del(lst->content);
 		free(lst);
 	}
 }

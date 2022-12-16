@@ -6,12 +6,21 @@ void *input_routine(void *addr)
   char input[1];
 
   list = (t_list *)addr;
-  lstclear(&list, &note_clear);
   read(1, &input, 1);
+  lstclear(&list, &oscsettings_clear);
   exit(0);
 }
 
-int main(void)
+int main(int argc, char **argv)
+{
+    if (argc == 2)
+      run(argv[1]);
+    else
+      run("default");
+    return 0;
+}
+
+void run(char *machine_name)
 {
   snd_pcm_t *pcm_handle = NULL;
   snd_seq_t *seq_handle = NULL;
@@ -28,8 +37,16 @@ int main(void)
   */
   pcm_handle = pcm_setup(pcm_handle);
   seq_handle = midi_setup(seq_handle);
-  system("aconnect 20 129");
-  system("aconnect 24 129");
+  if (strcmp(machine_name, "pi") == 0)
+  {
+    system("aconnect 20 128");
+    system("aconnect 24 128");
+  }
+  else
+  {
+    system("aconnect 20 129");
+    system("aconnect 24 129");
+  }
   //midiconnexion_setup();
   env_settings = osclstsettings_new(3);
   osclstsettings_set(env_settings, 0, 'f', 1.2);
@@ -39,11 +56,10 @@ int main(void)
   midi_initsettings(&midi_settings, seq_handle, &notes, &env_settings);
   pthread_create(&thread_pcm, NULL, &pcm_loop, (void *)&pcm_settings);
   pthread_create(&thread_midi, NULL, &midi_loop, (void *)&midi_settings);
-  pthread_create(&thread_input, NULL, &input_routine, NULL);
+  pthread_create(&thread_input, NULL, &input_routine, (void *)env_settings);
   pthread_join(thread_pcm, (void *)&pcm_settings);
   pthread_join(thread_midi, (void *)&midi_settings);
   pthread_join(thread_input, NULL);
-  return 0;
 }
 
 int *master_write(int *buffer, t_list **list)

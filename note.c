@@ -12,7 +12,6 @@ void *note_new(int pitch, int velocity, t_list **env)
   osclst_set(note->osc, &osc_setfreq, (float)ptof(pitch), '*', 2);
   osclst_set(note->osc, &osc_setamp, (float)velocity / 127, '/', 2);
   note_newenv(note, env);
-  print_note(note);
   return (void *)note;
 }
 
@@ -64,11 +63,13 @@ void note_newenv(t_note *note, t_list **settings)
 void note_clear(void *addr)
 {
   t_note *note;
-  t_list *osc;
+  t_list *lst;
 
   note = (t_note *)addr;
-  osc = (t_list *)note->osc;
-  lstclear(&osc, osc_del);
+  lst = (t_list *)note->osc;
+  lstclear(&lst, osc_del);
+  lst = (t_list *)note->env;
+  lstclear(&lst, osc_del);
   free(note);
 }
 
@@ -114,7 +115,6 @@ float note_setvalue(t_note *note, int i)
   out = osclst_getaddvalue(note->osc, i);
   env = osclst_getaddvalue(note->env, i);
   note->value = out * note->amp *env;
-  //printf("%f\n", note->value);
   return note->value;
 }
 
