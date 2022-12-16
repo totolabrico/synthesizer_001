@@ -4,7 +4,6 @@ void *osc_new(float freq, float amp)
 {
   t_osc *osc;
   osc = malloc(sizeof(t_osc));
-  //osc->freq =
   osc_setfreq(osc, freq);
   osc_setamp(osc, amp);
   osc->value = 0.0;
@@ -28,7 +27,10 @@ float osc_getfreq(t_osc *osc)
 void osc_setfreq(t_osc *osc, float freq)
 {
   osc->freq = freq;
-  osc->gain = 10 / freq;
+  if (freq > 30)
+    osc->gain = 10 / freq;
+  else
+    osc->gain = 1;
   osc->phase_error = osc_setphase_error(osc);
 }
 

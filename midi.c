@@ -21,16 +21,42 @@ void *midi_loop(void *addr)
 	while(1)
 	{
 		snd_seq_event_input(midi_settings->handle, &ev);
+		if (ev->type == SND_SEQ_EVENT_CONTROLLER) // 10
+		{		
+			controller_set(notes, midi_settings->env, ev->data.control.param, ev->data.control.value);
+		}
 		if (ev->type == SND_SEQ_EVENT_NOTEON) // 6
 		{
 			int pitch = ev->data.note.note;
 			int velocity = ev->data.note.velocity;
 			note = note_get(*notes, pitch);
-			if(note)
-				note_setvelocity(note, ev->data.note.velocity);
-			else
-				lstadd_back(notes, lstnew(note_new(pitch,velocity)));
+			if(!note)
+				lstadd_back(notes, lstnew(note_new(pitch,velocity, midi_settings->env)));
+			else //if (velocity != 0) # forever mode
+				note_setvelocity(note, 0);
 		}
 	}
 	return (addr);
+}
+
+void controller_set(t_list **notes, t_list **envset, int param, int value)
+{
+	float f;
+	int x, y;
+
+	printf("control change: CC[%d] Value(%3d)\n",param, value);
+	f = (float)value / 127 * 4;
+	param = param - 16;
+	x = param /4;
+	y = param % 4;
+	if (x == 0 && y < 3)
+	{
+		osclstsettings_set(*envset, y, 'f', f);
+		notes_setenv(notes, envset, y);
+	}
+	else if (x == 1 && y < 3)
+	{
+		osclstsettings_set(*envset, y, 'a', f);
+		notes_setenv(notes, envset, y);
+	}
 }
