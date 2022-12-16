@@ -10,7 +10,7 @@
 #define SAMPLELEN 441
 #define LATENCY 100000
 #define NBCHANNELS 1
-#define GAIN 0.05
+#define GAIN 0.01
 
 typedef struct s_list
 {

@@ -80,7 +80,7 @@ int *master_write(int *buffer, t_list **list)
       if (l)
         l =l->next;
     }
-    buffer[i] = (int)(out * GAIN * INT_MAX / 2);
+    buffer[i] = (int)(out * (float)GAIN * INT_MAX / 2);
     *list = notes_purge(*list);
     i++;
   }

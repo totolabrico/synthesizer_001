@@ -27,9 +27,12 @@ void *midi_loop(void *addr)
 		{	
 			if (ev->data.control.param == 64)
 			{
-				sustain = ev->data.control.value;
-				if (sustain == 0)
-					end_sustain(&sustained);
+				if (ev->data.control.value == 127)
+				{
+					sustain = 1 - sustain;
+					if (sustain == 0)
+						end_sustain(&sustained);
+				}
 			}
 			else
 				controller_set(notes, midi_settings->env, ev->data.control.param, ev->data.control.value);
