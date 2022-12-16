@@ -42,7 +42,7 @@ void	lstclear(t_list **lst, void (*del)(void*))
 
 void	lstdelone(t_list *lst, void (*del)(void*))
 {
-	if (lst && del)
+	if (lst)
 	{
 		if (del)
 			del(lst->content);

@@ -29,9 +29,7 @@ void *midi_loop(void *addr)
 			{
 				sustain = ev->data.control.value;
 				if (sustain == 0)
-				{
 					end_sustain(&sustained);
-				}
 			}
 			else
 				controller_set(notes, midi_settings->env, ev->data.control.param, ev->data.control.value);
@@ -50,10 +48,7 @@ void *midi_loop(void *addr)
 				else if (sustain == 0)
 					note_setvelocity(note, 0);
 				else
-				{
-					lstadd_back(&sustained, lstnew(note));
-					printf("sustain add neww note\n");
-				}
+					lstadd_back(&sustained, lstnew((void *)note));
 			}
 		}
 	}

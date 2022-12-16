@@ -10,7 +10,7 @@
 #define SAMPLELEN 441
 #define LATENCY 100000
 #define NBCHANNELS 1
-#define GAIN 0.1
+#define GAIN 0.05
 
 typedef struct s_list
 {
@@ -66,7 +66,6 @@ void				osclstsettings_set(t_list *list, int id, char set, float value);
 void				osclstsettings_print(t_list *list);
 void				oscsettings_clear(void *addr);
 
-
 void				run(char *machine_name);
 snd_pcm_t			*pcm_setup(snd_pcm_t *handle);
 snd_pcm_sframes_t	pcm_write(snd_pcm_t *handle, snd_pcm_sframes_t frames, int buffer[], long len);
@@ -118,9 +117,7 @@ float				note_setvalue(t_note *note, int i);
 void				note_newenv(t_note *note, t_list **settings);
 void				note_setenv(t_note *note, t_list **settings, int id);
 
-
 t_list				*notes_purge(t_list *list);
-//void				notes_set(t_list **notes, char setting, void (*f)(t_osc *, float), float val1, char op, float val2);
 void				notes_setenv(t_list **notes, t_list **settings, int id);
 void				print_notes(t_list *list);
 
