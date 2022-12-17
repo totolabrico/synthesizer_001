@@ -14,7 +14,7 @@ void *midi_loop(void *addr)
 	snd_seq_event_t *ev;
 	t_list **notes;
 	t_list *sustained = NULL;
-	int sustain = 1;
+	int sustain = 0;
 	t_note *note;
 
 	ev = NULL;
@@ -29,11 +29,10 @@ void *midi_loop(void *addr)
 			{
 				if (ev->data.control.value == 127)
 				{
-					sustain = 0;
-					end_sustain(&sustained);
+					sustain = 1 - sustain;
+					if (sustain == 0)
+						end_sustain(&sustained);
 				}
-				else
-					sustain = 1;
 			}
 			else
 				controller_set(notes, midi_settings->env, ev->data.control.param, ev->data.control.value);

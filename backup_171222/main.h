@@ -9,10 +9,8 @@
 #define SAMPLERATE 44100
 #define SAMPLELEN 441
 #define LATENCY 100000
-#define NBCHANNELS 2
+#define NBCHANNELS 1
 #define GAIN 0.01
-#define FORMAT SND_PCM_FORMAT_S16
-//static snd_pcm_format_t format = SND_PCM_FORMAT_S16;
 
 typedef struct s_list
 {
@@ -43,8 +41,6 @@ typedef struct s_note
 typedef struct s_pcmsettings
 {
 	snd_pcm_t *handle;
-	snd_pcm_channel_area_t *areas;
-  	short int *samples;
 	t_list **notes;
 	t_list **env;
 } t_pcmsettings;
@@ -63,7 +59,7 @@ typedef struct s_oscsettings
 } t_oscsettings;
 
 
-void				pcm_initsettings(t_pcmsettings *settings, snd_pcm_t *handle, snd_pcm_channel_area_t *areas, short int *samples, t_list **notes, t_list **env_settings);
+void				pcm_initsettings(t_pcmsettings *settings, snd_pcm_t *handle, t_list **notes, t_list **env_settings);
 void				midi_initsettings(t_midisettings *settings, snd_seq_t *handle, t_list **notes, t_list **env_settings);
 t_list				*osclstsettings_new(int size);
 void				osclstsettings_set(t_list *list, int id, char set, float value);
@@ -71,13 +67,11 @@ void				osclstsettings_print(t_list *list);
 void				oscsettings_clear(void *addr);
 
 void				run(char *machine_name);
-snd_pcm_t			*pcm_setup_handle();
-short int			*pcm_setup_samples();
-snd_pcm_channel_area_t *pcm_setup_areas(short int *samples);
-snd_pcm_sframes_t	pcm_write(t_pcmsettings *settings, snd_pcm_sframes_t frames, long len);
-snd_pcm_t			*pcm_close(t_pcmsettings *settings, snd_pcm_sframes_t frames, long len);
+snd_pcm_t			*pcm_setup(snd_pcm_t *handle);
+snd_pcm_sframes_t	pcm_write(snd_pcm_t *handle, snd_pcm_sframes_t frames, int buffer[], long len);
+snd_pcm_t			*pcm_close(snd_pcm_t *handle, snd_pcm_sframes_t frames, long len);
 void				*pcm_loop(void *addr);
-void				master_write(snd_pcm_channel_area_t *areas, t_list **list);
+int					*master_write(int *buffer, t_list **list);
 snd_seq_t			*midi_setup(snd_seq_t *seq_handle);
 void				*midi_loop(void *addr);
 void				*midi_check(snd_seq_t *seq_handle);

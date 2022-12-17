@@ -57,9 +57,9 @@ float osc_setvalue(t_osc *osc, int i)
 {
   float n = (float)i;
 
-  osc->value = sin((n / ((SAMPLERATE * NBCHANNELS) / osc->freq) + osc->phase) * 2 * M_PI) * osc->amp * osc->gain;
+  osc->value = sin((n / (SAMPLERATE / osc->freq) + osc->phase) * 2 * M_PI) * osc->amp * osc->gain;
   //printf("i : %d, freq : %f, amp : %f, phase : %f, value: %f\n", i, f, a ,p, value);
-  if (i == SAMPLELEN * NBCHANNELS - 1)
+  if (i == SAMPLELEN - 1)
     osc_setphase(osc);
   return osc->value;
 }

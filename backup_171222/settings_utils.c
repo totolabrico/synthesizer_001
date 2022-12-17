@@ -1,10 +1,8 @@
 #include "main.h"
 
-void pcm_initsettings(t_pcmsettings *settings, snd_pcm_t *handle, snd_pcm_channel_area_t *areas, short int *samples, t_list **notes, t_list **env_settings)
+void pcm_initsettings(t_pcmsettings *settings, snd_pcm_t *handle, t_list **notes, t_list **env_settings)
 {
   settings->handle = handle;
-  settings->areas = areas;
-  settings->samples = samples;
   settings->notes = notes;
   settings->env = env_settings;
 }
@@ -37,7 +35,7 @@ t_list *osclstsettings_new(int size)
   i = 0;
   while (i < size)
   {
-    lstadd_back(&l, lstnew(oscsettings_new(1,1)));
+    lstadd_back(&l, lstnew(oscsettings_new(2,1)));
     i++;
   }
   return l;
