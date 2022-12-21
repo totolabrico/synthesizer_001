@@ -45,13 +45,18 @@ float osclst_getaddvalue(t_list *list, int i)
 {
   t_osc *osc;
   float res;
+  int size;
 
   res = 0;
+  size = lstsize(list);
   while(list)
   {
     osc = (t_osc *)list->content;
     if (osc)
-      res +=  osc_getvalue(osc, i);
+    {
+      osc_setvalue(osc, i);
+      res += osc->value / (float)size;
+    }
     list = list->next;
   }
   return res;

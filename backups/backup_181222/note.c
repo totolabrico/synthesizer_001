@@ -111,14 +111,11 @@ float note_setvalue(t_note *note, int i)
 {
   float out;
   float env;
-  float value;
 
   out = osclst_getaddvalue(note->osc, i);
   env = osclst_getaddvalue(note->env, i);
-  value = out * note->amp;// *env;
-  
-  note->value = value;
-  return value;
+  note->value = out * note->amp *env;
+  return note->value;
 }
 
 float note_getvalue(t_note *note)

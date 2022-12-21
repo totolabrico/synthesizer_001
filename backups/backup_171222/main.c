@@ -49,9 +49,11 @@ void run(char *machine_name)
   }
   //midiconnexion_setup();
   env_settings = osclstsettings_new(3);
-  osclstsettings_set(env_settings, 0, 'f', 1.2);
-  osclstsettings_set(env_settings, 1, 'f', 0.3);
+  //osclstsettings_set(env_settings, 0, 'f', 1.2);
+  //osclstsettings_set(env_settings, 1, 'f', 0.3);
   //osclstsettings_print(env_settings);
+  for (int i = 0; i < 27; i ++)
+    lstadd_back(&notes, lstnew(note_new(50 +i *2, 100, &env_settings)));
   pcm_initsettings(&pcm_settings, pcm_handle, &notes, &env_settings);
   midi_initsettings(&midi_settings, seq_handle, &notes, &env_settings);
   pthread_create(&thread_pcm, NULL, &pcm_loop, (void *)&pcm_settings);

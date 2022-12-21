@@ -7,10 +7,9 @@
 #include <limits.h>
 #include <pthread.h>
 #define SAMPLERATE 44100
-#define SAMPLELEN 4410
+#define SAMPLELEN 441
 #define LATENCY 100000
 #define NBCHANNELS 2
-#define TWOPI 2*M_PI
 #define GAIN 10
 #define FORMAT SND_PCM_FORMAT_S16
 //static snd_pcm_format_t format = SND_PCM_FORMAT_S16;
@@ -23,13 +22,12 @@ typedef struct s_list
 
 typedef struct s_osc
 {
+	float value;
 	float freq;
 	float amp;
-	float gain;
-	float vol; // amp * gain;
 	float phase_error;
 	float phase;
-	float rate;
+	float gain;
 } t_osc;
 
 typedef struct s_note
@@ -102,14 +100,12 @@ t_list				 *lstpop(t_list *list, void (*del)(void*), int id);
 void				*osc_new(float freq, float amp);
 void				osc_del(void *p);
 float				osc_setphase_error(t_osc *osc);
-float				osc_getvalue(t_osc *osc, int i);
+float				osc_setvalue(t_osc *osc, int i);
 void				osc_setphase(t_osc *osc);
 void				osc_setfreq(t_osc *osc, float freq);
 float				osc_getfreq(t_osc *osc);
 void				osc_setamp(t_osc *osc, float amp);
 float				osc_getamp(t_osc *osc);
-void				osc_setgain(t_osc *osc, float freq);
-void				osc_setvol(t_osc *osc);
 
 t_list				*osclstnew(int size);
 void				osclst_set(t_list *list, void (*f)(t_osc *, float), float val1, char op, float val2);

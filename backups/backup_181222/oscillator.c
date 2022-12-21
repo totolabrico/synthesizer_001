@@ -6,6 +6,7 @@ void *osc_new(float freq, float amp)
   osc = malloc(sizeof(t_osc));
   osc_setfreq(osc, freq);
   osc_setamp(osc, amp);
+  osc->value = 0.0;
   osc->phase = 0;
   return (void*)osc;
 }
@@ -18,11 +19,6 @@ void osc_del(void *p)
     free(osc);
 }
 
-void osc_setrate(t_osc *osc, float freq)
-{
-  osc->rate = 1 /((SAMPLERATE * NBCHANNELS) / freq);
-}
-
 float osc_getfreq(t_osc *osc)
 {
   return osc->freq;
@@ -31,18 +27,11 @@ float osc_getfreq(t_osc *osc)
 void osc_setfreq(t_osc *osc, float freq)
 {
   osc->freq = freq;
-  osc->phase_error = osc_setphase_error(osc);
-  osc_setgain(osc, freq);
-  osc_setrate(osc, freq);
-}
-
-void osc_setgain(t_osc *osc, float freq)
-{
   if (freq > 30)
     osc->gain = 10 / freq;
   else
     osc->gain = 1;
-  osc_setvol(osc);
+  osc->phase_error = osc_setphase_error(osc);
 }
 
 float osc_getamp(t_osc *osc)
@@ -53,12 +42,6 @@ float osc_getamp(t_osc *osc)
 void osc_setamp(t_osc *osc, float amp)
 {
     osc->amp = amp;
-    osc_setvol(osc);
-}
-
-void osc_setvol(t_osc *osc)
-{
-  osc->vol = osc->amp * osc->gain;
 }
 
 float osc_setphase_error(t_osc *osc)
@@ -70,19 +53,15 @@ float osc_setphase_error(t_osc *osc)
   return error;
 }
 
-float osc_getvalue(t_osc *osc, int i)
+float osc_setvalue(t_osc *osc, int i)
 {
   float n = (float)i;
-  float value;
 
-  value = sin((n * osc->rate + osc->phase) * TWOPI) * osc->vol;
-  //value = sin(1);
+  osc->value = sin((n / ((SAMPLERATE * NBCHANNELS) / osc->freq) + osc->phase) * 2 * M_PI) * osc->amp * osc->gain;
   //printf("i : %d, freq : %f, amp : %f, phase : %f, value: %f\n", i, f, a ,p, value);
-  
   if (i == SAMPLELEN * NBCHANNELS - 1)
     osc_setphase(osc);
-    
-  return value;
+  return osc->value;
 }
 
 void osc_setphase(t_osc *osc)

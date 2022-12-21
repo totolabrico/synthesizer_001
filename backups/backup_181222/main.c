@@ -50,9 +50,9 @@ void run(char *machine_name)
   env_settings = osclstsettings_new(3);
   //osclstsettings_set(env_settings, 0, 'f', 1);
   //osclstsettings_set(env_settings, 0, 'a', 1);
-  for (int i = 0; i <11; i ++)
+  for (int i = 0; i < 14; i ++)
     lstadd_back(&notes, lstnew(note_new(20 + i * 5, 100, &env_settings)));
-  printf("%d\n",lstsize(notes));
+  printf("%d\n", lstsize(notes));
   //osclstsettings_print(env_settings);
   pcm_initsettings(&pcm_settings, pcm_handle, areas, samples, &notes, &env_settings);
   midi_initsettings(&midi_settings, seq_handle, &notes, &env_settings);

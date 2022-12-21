@@ -13,7 +13,7 @@ snd_pcm_t *pcm_setup_handle()
   }
   if ((err = snd_pcm_set_params(handle,
                     FORMAT,
-                    SND_PCM_ACCESS_RW_INTERLEAVED,// SND_PCM_ACCESS_MMAP_INTERLEAVED,
+                    SND_PCM_ACCESS_RW_INTERLEAVED,
                     NBCHANNELS,
                     SAMPLERATE,
                     1,
@@ -27,7 +27,7 @@ snd_pcm_t *pcm_setup_handle()
 short int *pcm_setup_samples()
 {
   short int *res;
-  res =  malloc(SAMPLELEN * snd_pcm_format_physical_width(FORMAT));
+  res =  malloc((SAMPLELEN * NBCHANNELS * snd_pcm_format_physical_width(FORMAT)) / 4);
   return res;
 }
 
@@ -57,10 +57,22 @@ void master_write(snd_pcm_channel_area_t *areas, t_list **list)
   unsigned int chn;
   short int value;
   float out;
-  register int i = 0;
+  int i = 0;
   
   for (chn = 0; chn < NBCHANNELS; chn++) 
-    samples[chn] = (((short int *)areas[chn].addr) + (areas[chn].first) / 8 );
+  {
+    if ((areas[chn].first % 8) != 0) 
+    {
+      printf("areas[%u].first == %u, aborting...\n", chn, areas[chn].first);
+      exit(EXIT_FAILURE);
+    }
+    samples[chn] = (((short int *)areas[chn].addr) + (areas[chn].first / 4));
+    if ((areas[chn].step % 16) != 0) 
+    {
+      printf("areas[%u].step == %u, aborting...\n", chn, areas[chn].step);
+      exit(EXIT_FAILURE);
+    }
+  }
 
   while(i < SAMPLELEN * NBCHANNELS)
   {
@@ -124,16 +136,3 @@ snd_pcm_t *pcm_close(t_pcmsettings *settings)
   snd_pcm_close(settings->handle);
   return settings->handle;
 }
-/*
-static int period_event = 0;  
-
-void set_swparams(snd_pcm_t *handle, snd_pcm_sw_params_t *swparams)
-{
-
-    snd_pcm_sw_params_current(handle, swparams);
-    snd_pcm_sw_params_set_start_threshold(handle, swparams, (buffer_size / period_size) * period_size);
-    snd_pcm_sw_params_set_avail_min(handle, swparams, period_event ? buffer_size : period_size);
-    snd_pcm_sw_params_set_period_event(handle, swparams, 1);
-    snd_pcm_sw_params(handle, swparams);
-}
-*/
